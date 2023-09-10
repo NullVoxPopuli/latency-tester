@@ -11,6 +11,7 @@
 
     <title>Latency Tester</title>
     <script type="text/javascript" src="./src/setup.js"></script>
+    <script defer type="module" src="./src/main.js"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/2.0.0/modern-normalize.min.css"
@@ -64,6 +65,9 @@
         bottom: 2rem;
         right: 2rem;
       }
+      #subinfo {
+        margin: 0: auto;
+      }
 
     </style>
   </head>
@@ -96,9 +100,10 @@
     </p>
 
     <div id='interaction'>
-      <div id='info'></div>
+      <div style="display: none;" id='info'></div>
       <button id='tap-zone'>tap here to start</button>
     </div>
+    <div id="subinfo"></div>
 
     <button style="display: none;" id="stop">stop</button>
 
@@ -106,6 +111,5 @@
       Contribute? <a href="https://github.com/NullVoxPopuli/latency-tester" target='_blank', rel='noopener noreferrer'>https://github.com/NullVoxPopuli/latency-tester</a>
     </footer>
 
-    <script type="module" src="./src/main.js"></script>
   </body>
 </html>

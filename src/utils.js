@@ -1,3 +1,7 @@
+export function find(selector) {
+  return document.querySelector(selector);
+}
+
 export function timeout(ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);

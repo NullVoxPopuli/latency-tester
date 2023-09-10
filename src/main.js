@@ -2,13 +2,15 @@
 import { reactive } from "@starbeam/js";
 import { Cell, DEBUG_RENDERER } from "@starbeam/universal";
 
-import { slidingWindowAverageOf, timeout } from "./utils.js";
+import { slidingWindowAverageOf, timeout, find } from "./utils.js";
 
 // NOTE:
 //  60,000 / BPM = [one beat in ms]
 //
 //  BPM = 60000 / [one beat in ms]
 const MS_IN_M = 60_000;
+
+const MIN_BEATS = 10;
 
 let tempo = Cell(120);
 let latency = Cell();
@@ -29,10 +31,16 @@ let beatTimes = reactive.array();
 let userTimes = reactive.array();
 
 let elements = {
-  toggler: document.getElementById("toggler-button"),
-  latencyDisplay: document.getElementById("latency"),
-  bpmInput: document.getElementById("bpm"),
-  detectedBpm: document.getElementById("detectedBPM"),
+  // data
+  bpmInput: find("#bpm"),
+  latencyDisplay: find("#latency"),
+  detectedBpm: find("#detectedBPM"),
+  // controls
+  stop: find('#stop'), 
+  tapZone: find('#tap-zone'), 
+  // messaging on top of the controls
+  info: find('#info'),
+  subinfo: find('#subinfo')
 };
 
 // audio player
@@ -85,42 +93,71 @@ elements.bpmInput.addEventListener("input", (e) => {
   }
 });
 
-async function toggle(e) {
-  let button = e.target;
-
-  isRunning = !isRunning;
-
-  button.innerHTML = isRunning ? "Stop" : "Start";
-
-  if (isRunning) {
-    bpmInput.disabled = true;
-
-    return start();
-  }
-
-  bpmInput.disabled = false;
-  player.stop();
-}
-
-elements.toggler.addEventListener("click", toggle);
-
 function handleUserBeat(e) {
   let userBeatAt = new Date();
 
   userTimes.push(userBeatAt);
 }
 
-document.addEventListener("click", handleUserBeat);
-document.addEventListener("keypress", handleUserBeat);
+elements.stop.addEventListener('click', () => {
+  isRunning.current = false;    
+});
+
+elements.tapZone.addEventListener('click', () => {
+  if (isRunning.current) {
+    // TODO: record tap
+    // Get 3 baseline taps first to make sure
+    // the user is paying attention
+    // be sure to include a countdown
+
+    return;
+  }
+
+  isRunning.current = true;
+  tapZone.innerHTML = `tap to the beat`;
+});
 
 DEBUG_RENDERER.render({
-  render: () => userTimes.length <= 10,
+  render: () => userTimes.length <= MIN_BEATS,
   debug: (needMoreData) => {
     if (needMoreData) {
-      // detectedBpm
+      let remaining = MIN_BEATS - userTimes.length; 
+
+      elements.subinfo.innerHTML = `Need ${remaining} more tap(s)`;
+      return;
     }
+
+    elements.subinfo.innerHTML = '';
   },
 });
+
+DEBUG_RENDERER.render({
+  render: () => userTempo.current, 
+  debug: (tempo) => {
+    elements.detectedBpm.innerHTML = tempo;
+  }
+});
+
+DEBUG_RENDERER.render({
+  render: () => latency.current, 
+  debug: (ms) => {
+    elements.latencyDisplay.innerHTML = ms;
+  }
+});
+
+DEBUG_RENDERER.render({
+  render: () => isRunning.current, 
+  debug: (isRunning) => {
+    if (isRunning) {
+      bpmInput.disabled = true;
+      elements.stop.style.display = 'block';
+      return;
+    }
+    bpmInput.disabled = false;
+    elements.stop.style.display = 'none';
+  }
+});
+
 
 function bpmDetector(e) {
   if (e.target === toggler) return;
