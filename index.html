@@ -1,199 +1,51 @@
 <!DOCTYPE html>
 <html lang='en'>
   <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta 
+      name="description"
+      content="Test the latency between a sound and when you hear it"
+    />
+
     <title>Latency Tester</title>
-
-    <link rel="stylesheet" href="https://cdn.shoelace.style/1.0.0-beta24/shoelace.css">
-
-    <style>
-      body {
-        margin: 0.5rem;
-      }
-      .grid-x {
-        display: grid;
-        grid-auto-flow: column;
-        justify-content: flex-start;
-        align-items: baseline;
-        grid-gap: 1rem;
-      }
-    </style>
+    <script type="text/javascript" src="./src/setup.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css"
+    />
   </head>
   <body>
     <h1>Latency Tester</h1>
     <p>
       Find out how many milliseconds of delay there is between the sound's play-start time, and when you hear it.
-      <br><br>
 
-      <em>Instructions</em><br>
+      <br /><br />
+
+      <em>Instructions</em><br />
       Tap spacebar or click the background on beat. The delay will be measured on a trailing average of the last 10 beats.
     </p>
 
     <button id='toggler-button'>Start</button>
+
     <p>
       <div class='grid-x'>
         <label>Current BPM</label>
         <input style='width: auto;' type='number' id='bpm' min="60"><br>
       </div>
-        <label>Current Latency (ms)</label>
-        <span id='latency'>0</span><br>
 
-        <label>Detected BPM</label>
-        <span id='detectedBPM'></span>
+      <label>Current Latency (ms)</label>
+      <span id='latency'>0</span><br />
+
+      <label>Detected BPM</label>
+      <span id='detectedBPM'></span>
     </p>
-    <footer>
 
+    <footer>
       Contribute? <a href="https://github.com/NullVoxPopuli/latency-tester" target='_blank', rel='noopener noreferrer'>https://github.com/NullVoxPopuli/latency-tester</a>
     </footer>
 
-
-    <script type='text/javascript'>
-      // NOTE:
-      //  60,000 / BPM = [one beat in ms]
-      //
-      //  BPM = 60000 / [one beat in ms]
-
-      // elements
-      let latencyDisplay;
-      let bpmInput;
-      let detectedBpm;
-      let toggler;
-
-      // latency calculation
-      let latencies = [];
-      let lastBeatAt;
-
-      // bpm detection
-      let currentBpmInMs = 0;
-      let bpmIntervals = [];
-      let bpmLastTimestamp;
-
-      // audio settings
-      let tempo = 120; // bpm
-
-      // audio player
-      // some inspiration from
-      // https://codepen.io/SitePoint/pen/JRaLVR?editors=1010
-      let isRunning = false;
-      let audioContext;
-      let audioBuffer;
-      let player; // AudioBufferSourceNode
-
-      async function toggle(e) {
-        let button = e.target;
-
-        isRunning = !isRunning;
-
-        button.innerHTML = isRunning
-          ? 'Stop'
-          : 'Start';
-
-        if (isRunning) {
-          bpmInput.disabled = true;
-          return start();
-        }
-
-        bpmInput.disabled = false;
-        player.stop();
-      }
-
-      function timeout(ms) {
-        return new Promise((resolve) => {
-          setTimeout(resolve,  ms);
-        });
-      }
-
-      async function start() {
-        currentBpmInMs = 60000 / tempo;
-        bpmIntervals = [];
-        latencies = [];
-        audioContext = new AudioContext();
-        audioBuffer = await loadSound();
-
-        while (isRunning) {
-          playSound(audioBuffer);
-          lastBeatAt = new Date();
-          await timeout(currentBpmInMs);
-        }
-      }
-
-      async function loadSound() {
-        if (audioBuffer) return;
-
-        let response = await fetch('./kick.mp3', { mode: 'no-cors' });
-        let arrayBuffer = await response.arrayBuffer();
-        let audio = await audioContext.decodeAudioData(arrayBuffer);
-
-        return audio;
-      }
-
-      function playSound(buffer, delay = 0) {
-        player = audioContext.createBufferSource();
-        player.buffer = audioBuffer;
-        player.connect(audioContext.destination);
-        player.loop = false;
-        player.start(delay);
-      }
-
-      function handleUserBeat(e) {
-        let userBeatAt = new Date();
-
-        latency = userBeatAt - lastBeatAt;
-
-        latencies.push(latency);
-
-        if (latencies.length > 10) {
-          let avg = slidingWindowAverageOf(latencies);
-
-          latencyDisplay.innerHTML = avg;
-        }
-
-        bpmDetector(e);
-      }
-
-
-      function bpmDetector(e) {
-        if (e.target === toggler) return;
-
-        let newTimestamp = new Date();
-        let interval = bpmLastTimestamp ? newTimestamp - bpmLastTimestamp : 0;
-        bpmIntervals.push(interval);
-        bpmLastTimestamp = new Date();
-
-        if (bpmIntervals.length > 10) {
-          let avg = slidingWindowAverageOf(bpmIntervals);
-          let bpm = 60000 / avg;
-
-          detectedBpm.innerHTML = bpm;
-        }
-      }
-
-      function slidingWindowAverageOf(array, amount = 10) {
-        let subArray = array.slice(amount);
-        let avg = subArray.reduce((sum, current) => current + sum, 0) / subArray.length;
-
-        return avg;
-      }
-
-
-      toggler = document.getElementById('toggler-button');
-      latencyDisplay = document.getElementById('latency');
-      bpmInput = document.getElementById('bpm');
-      detectedBpm = document.getElementById('detectedBPM');
-
-      bpmInput.value = tempo;
-
-      toggler.addEventListener('click', toggle);
-      bpmInput.addEventListener('input', e => {
-        let value = e.target.value;
-        let num = parseInt(value, 10);
-
-        if (num) {
-          bpmInput.value = num;
-        }
-      })
-
-      document.addEventListener('click', handleUserBeat);
-      document.addEventListener('keypress', handleUserBeat);
-    </script>
+    <script type="module" src="./src/main.js"></script>
   </body>
 </html>
