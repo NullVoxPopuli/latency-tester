@@ -14,19 +14,8 @@
     <script defer type="module" src="./src/main.js"></script>
     <link
       rel="stylesheet"
-      media="(prefers-color-scheme:light)"
-      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.8.0/cdn/themes/light.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/2.0.0/modern-normalize.min.css"
     />
-    <link
-      rel="stylesheet"
-      media="(prefers-color-scheme:dark)"
-      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.8.0/cdn/themes/dark.css"
-      onload="document.documentElement.classList.add('sl-theme-dark');"
-    />
-
-
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.8.0/cdn/components/button/button.js"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.8.0/cdn/components/input/input.js"></script>
 
     <style>
       body {
@@ -97,7 +86,7 @@
     <p id="data">
       <label>
         <span>Current BPM</span>
-        <sl-input style='width: auto;' type='number' id='bpm' min="60"></sl-input><br>
+        <input style='width: auto;' type='number' id='bpm' min="60"><br>
       </label>
 
       <label>
@@ -113,11 +102,11 @@
 
     <div id='interaction'>
       <div style="display: none;" id='info'></div>
-      <sl-button id='tap-zone' variant="primary">tap here to start</sl-button>
+      <button id='tap-zone'>tap here to start</button>
     </div>
     <div id="subinfo"></div>
 
-    <sl-button variant="danger" style="display: none;" id="stop">stop</sl-button>
+    <button style="display: none;" id="stop">stop</button>
 
     <footer>
       Contribute? <a href="https://github.com/NullVoxPopuli/latency-tester" target='_blank', rel='noopener noreferrer'>https://github.com/NullVoxPopuli/latency-tester</a>
