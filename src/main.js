@@ -149,11 +149,11 @@ DEBUG_RENDERER.render({
   render: () => isRunning.current, 
   debug: (isRunning) => {
     if (isRunning) {
-      bpmInput.disabled = true;
+      elements.bpmInput.disabled = true;
       elements.stop.style.display = 'block';
       return;
     }
-    bpmInput.disabled = false;
+    elements.bpmInput.disabled = false;
     elements.stop.style.display = 'none';
   }
 });
