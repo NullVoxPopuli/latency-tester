@@ -13,8 +13,59 @@
     <script type="text/javascript" src="./src/setup.js"></script>
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/2.0.0/modern-normalize.min.css"
     />
+    <style>
+      body {
+          padding: 1rem 2rem;
+      }
+
+      footer {
+          position: fixed;
+          bottom: 1rem;
+          background: white;
+      }
+
+      #interaction {
+        margin: 0 auto;
+        height: 200px;
+        width: 200px;
+        position: relative;
+      }
+      #info {
+        position: absolute;
+        inset: 0;
+      }
+      #tap-zone {
+          width: 200px;
+          height: 200px;
+      }
+
+      #data {
+          display: grid;
+          gap: 0.75rem;
+      }
+
+      label {
+        max-width: 250px;
+        display: flex;
+        gap: 1rem;
+        line-height: 1.5rem;
+      }
+
+      input {
+        max-width: 80px;
+      }
+
+      #stop {
+        position: fixed;
+        padding: 0.5rem;
+        z-index: 1;
+        bottom: 2rem;
+        right: 2rem;
+      }
+
+    </style>
   </head>
   <body>
     <h1>Latency Tester</h1>
@@ -24,23 +75,32 @@
       <br /><br />
 
       <em>Instructions</em><br />
-      Tap spacebar or click the background on beat. The delay will be measured on a trailing average of the last 10 beats.
+      Tap the button on beat. The delay will be measured on a trailing average of the last 10 beats.
     </p>
 
-    <button id='toggler-button'>Start</button>
-
-    <p>
-      <div class='grid-x'>
-        <label>Current BPM</label>
+    <p id="data">
+      <label>
+        <span>Current BPM</span>
         <input style='width: auto;' type='number' id='bpm' min="60"><br>
-      </div>
+      </label>
 
-      <label>Current Latency (ms)</label>
-      <span id='latency'>0</span><br />
+      <label>
+        <span>Current Latency (ms)</span>
+        <span id='latency'>0</span><br />
+      </label>
 
-      <label>Detected BPM</label>
-      <span id='detectedBPM'></span>
+      <label>
+        <span>Detected BPM</span>
+        <span id='detectedBPM'></span>
+      </label>
     </p>
+
+    <div id='interaction'>
+      <div id='info'></div>
+      <button id='tap-zone'>tap here to start</button>
+    </div>
+
+    <button style="display: none;" id="stop">stop</button>
 
     <footer>
       Contribute? <a href="https://github.com/NullVoxPopuli/latency-tester" target='_blank', rel='noopener noreferrer'>https://github.com/NullVoxPopuli/latency-tester</a>
