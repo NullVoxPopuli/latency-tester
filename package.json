@@ -1,0 +1,20 @@
+{
+  "scripts": {
+    "lint": "concurrently 'npm:lint:*:fix'",
+    "lint:js:fix": "eslint . --fix",
+    "lint:prettier:fix": "prettier -w ."
+  },
+  "files": [
+    "src",
+    "index.html"
+  ],
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.22.15",
+    "@nullvoxpopuli/eslint-configs": "^3.2.2",
+    "concurrently": "^8.2.1",
+    "eslint": "^8.49.0",
+    "eslint-plugin-ember": "^11.11.1",
+    "eslint-plugin-qunit": "^8.0.0",
+    "prettier": "^3.0.3"
+  }
+}
