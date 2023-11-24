@@ -170,7 +170,7 @@ elements.tapZone.addEventListener('click', () => {
 DEBUG_RENDERER.render({
   render: () => userTempo.current, 
   debug: (tempo) => {
-    elements.detectedBpm.innerHTML = tempo ?? 'pending';
+    elements.detectedBpm.innerHTML = tempo ? tempo.toFixed(3) : 'pending';
   }
 });
 
@@ -226,7 +226,7 @@ DEBUG_RENDERER.render({
 DEBUG_RENDERER.render({
   render: () => latency.current, 
   debug: (ms) => {
-    elements.latencyDisplay.innerHTML = ms ?? 'pending';
+    elements.latencyDisplay.innerHTML = ms ? ms.toFixed(3) : 'pending';
   }
 });
 
