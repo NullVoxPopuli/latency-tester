@@ -33,6 +33,7 @@ let packages = [
 for (let pkg of packages) {
   if (Array.isArray(pkg)) {
     let [name, version] = pkg;
+
     map[pkg] = `https://esm.sh/*${name}@${version}?raw`;
 
     continue;
