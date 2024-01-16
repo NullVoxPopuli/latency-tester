@@ -230,9 +230,12 @@ DEBUG_RENDERER.render({
 DEBUG_RENDERER.render({
   render: () => [latency.current, tempo.current],
   debug: ([ms, bpm]) => {
-    let rounded = ms ? ms.toFixed(3) : 0;
+    // We can't get milliseconds with more precisions than 1 decimal place.
+    // This is probably fine, as human's can't perceive the difference between
+    // tenths of milliseconds.
+    let rounded = ms ? ms.toFixed(1) : 0;
     let beatDuration = MS_IN_M / bpm;
-    let mod = rounded ? (rounded % (MS_IN_M / bpm)).toFixed(3) : 'pending';
+    let mod = rounded ? (rounded % (MS_IN_M / bpm)).toFixed(1) : 'pending';
 
     elements.latencyDisplay.innerHTML = rounded || 'pending';
     elements.modLatencyDisplay.innerHTML = mod;
