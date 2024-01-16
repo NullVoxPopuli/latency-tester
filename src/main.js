@@ -2,7 +2,13 @@
 import { reactive } from "@starbeam/js";
 import { Cell, DEBUG_RENDERER } from "@starbeam/universal";
 
-import { slidingWindowAverageOf, avg, timeout, find, timestampsToIntervals } from "./utils.js";
+import {
+  slidingWindowAverageOf,
+  avg,
+  timeout,
+  find,
+  timestampsToIntervals,
+} from "./utils.js";
 
 // NOTE:
 //  60,000 / BPM = [one beat in ms]
@@ -34,13 +40,14 @@ let elements = {
   // data
   bpmInput: find("#bpm"),
   latencyDisplay: find("#latency"),
+  modLatencyDisplay: find("#modLatency"),
   detectedBpm: find("#detectedBPM"),
   beatDuration: find("#beatDuration"),
   // controls
-  stop: find('#stop'), 
-  tapZone: find('#tap-zone'), 
+  stop: find("#stop"),
+  tapZone: find("#tap-zone"),
   // info
-  progress: find('progress'),
+  progress: find("progress"),
 };
 
 // audio player
@@ -92,16 +99,15 @@ elements.bpmInput.addEventListener("input", (e) => {
 
 let countdown = Cell(3);
 
-elements.stop.addEventListener('click', () => {
+elements.stop.addEventListener("click", () => {
   stop();
   clearTimeout(gettingReadyTimeout);
   clearInterval(progressInterval);
 
-  isRunning.current = false;    
-  elements.progress.style.display = 'none';
-  elements.tapZone.innerHTML = 'tap here to start';
+  isRunning.current = false;
+  elements.progress.style.display = "none";
+  elements.tapZone.innerHTML = "tap here to start";
 });
-
 
 function countdownMessage(count) {
   return `
@@ -114,7 +120,7 @@ function countdownMessage(count) {
 
 let gettingReadyTimeout;
 let progressInterval;
-elements.tapZone.addEventListener('click', () => {
+elements.tapZone.addEventListener("click", () => {
   if (isRunning.current && countdown.current === 0) {
     userTimes.push(new Date());
 
@@ -133,15 +139,15 @@ elements.tapZone.addEventListener('click', () => {
 
   isRunning.current = true;
   elements.tapZone.innerHTML = `Get ready`;
-  elements.progress.style.display = 'block';
+  elements.progress.style.display = "block";
 
   let fiveS = 5_000;
   let increments = 1;
 
   progressInterval = setInterval(() => {
     increments += 1;
-    elements.progress.value = (fiveS - (increments * 100));
-  }, 100)
+    elements.progress.value = fiveS - increments * 100;
+  }, 100);
   gettingReadyTimeout = setTimeout(() => {
     countdown.current = 3;
     elements.tapZone.innerHTML = countdownMessage(countdown.current);
@@ -156,9 +162,9 @@ elements.tapZone.addEventListener('click', () => {
 
         gettingReadyTimeout = setTimeout(() => {
           countdown.current = 0;
-          elements.tapZone.innerHTML = 'Tap'; 
+          elements.tapZone.innerHTML = "Tap";
           clearInterval(progressInterval);
-          elements.progress.style.display = 'none';
+          elements.progress.style.display = "none";
 
           start();
         }, 1000);
@@ -168,10 +174,10 @@ elements.tapZone.addEventListener('click', () => {
 });
 
 DEBUG_RENDERER.render({
-  render: () => userTempo.current, 
+  render: () => userTempo.current,
   debug: (tempo) => {
-    elements.detectedBpm.innerHTML = tempo ? tempo.toFixed(3) : 'pending';
-  }
+    elements.detectedBpm.innerHTML = tempo ? tempo.toFixed(3) : "pending";
+  },
 });
 
 DEBUG_RENDERER.render({
@@ -179,32 +185,36 @@ DEBUG_RENDERER.render({
   debug: (times) => {
     if (times.length < 2) return;
 
-    let intervals =  timestampsToIntervals(times);
+    let intervals = timestampsToIntervals(times);
 
     let intervalAvg = avg(intervals);
     let bpm = 60000 / intervalAvg;
 
     userTempo.current = bpm;
-  }
+  },
 });
 
 DEBUG_RENDERER.render({
-  render: () => { return {
-    userTimes: [...userTimes],
-    beatTimes: [...beatTimes],
-  }
+  render: () => {
+    return {
+      userTimes: [...userTimes],
+      beatTimes: [...beatTimes],
+    };
   },
   debug: (data) => {
     let userLength = data.userTimes.length;
 
     if (userLength < 2) return;
     // Get the approprate length of system-beats.
-      // It's possible there are more system beats,
-      // because the user is delayed.
-      //
-      // Likewise, it's also possible someone is trying to break the tool
+    // It's possible there are more system beats,
+    // because the user is delayed.
+    //
+    // Likewise, it's also possible someone is trying to break the tool
     // and give more beats faster than they're supposed to
-    let systemBeats = data.beatTimes.slice(0, Math.min(userLength, data.beatTimes.length));
+    let systemBeats = data.beatTimes.slice(
+      0,
+      Math.min(userLength, data.beatTimes.length),
+    );
 
     let intervals = [];
 
@@ -219,31 +229,36 @@ DEBUG_RENDERER.render({
     let latencyAvg = avg(intervals);
 
     latency.current = latencyAvg;
-  }
+  },
 });
 
-
 DEBUG_RENDERER.render({
-  render: () => latency.current, 
-  debug: (ms) => {
-    elements.latencyDisplay.innerHTML = ms ? ms.toFixed(3) : 'pending';
-  }
+  render: () => [latency.current, tempo.current],
+  debug: ([ms, bpm]) => {
+    let rounded = ms ? ms.toFixed(3) : 0;
+    let beatDuration = MS_IN_M / bpm;
+
+    elements.latencyDisplay.innerHTML = rounded || "pending";
+    elements.modLatencyDisplay.innerHTML = rounded
+      ? rounded % (MS_IN_M / bpm)
+      : "pending";
+  },
 });
 
 DEBUG_RENDERER.render({
   render: () => tempo.current,
-  debug: (bpm) => elements.beatDuration.innerHTML = MS_IN_M / bpm,
+  debug: (bpm) => (elements.beatDuration.innerHTML = MS_IN_M / bpm),
 });
 
 DEBUG_RENDERER.render({
-  render: () => isRunning.current, 
+  render: () => isRunning.current,
   debug: (isRunning) => {
     if (isRunning) {
       elements.bpmInput.disabled = true;
-      elements.stop.style.display = 'block';
+      elements.stop.style.display = "block";
       return;
     }
     elements.bpmInput.disabled = false;
-    elements.stop.style.display = 'none';
-  }
+    elements.stop.style.display = "none";
+  },
 });
