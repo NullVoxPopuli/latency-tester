@@ -7,27 +7,38 @@
  * TODO:
  *   make a UI toggle or something to change between simple and explicit techniques
  */
-// let version = '0.8.10-unstable.398c1bd'; /* unstable / nightly */
-let version = 'latest';
+// let version = "latest";
+let sha = '9b5a07d';
+let version = `0.8.10-unstable.${sha}`; /* unstable / nightly */
 let map = {
-  '@starbeam/collections': 'https://esm.run/@starbeam/collections@0.8.9',
-  '@starbeam/universal': 'https://esm.run/@starbeam/universal@0.8.9',
-  '@starbeam/js': 'https://esm.run/@starbeam/js@0.8.9',
+  'inspect-utils': 'https://esm.sh/inspect-utils',
 };
 
 let packages = [
-  // '@starbeam/collections',
+  // Used
+  '@starbeam/collections',
+  '@starbeam/reactive',
+  '@starbeam/universal',
+  // Dependencies that we want to make sure only get included once
   // '@starbeam/core-utils',
-  // '@starbeam/debug',
-  // '@starbeam/js',
-  // '@starbeam/shared',
-  // '@starbeam/timeline',
-  // '@starbeam/universal',
-  // '@starbeam/verify',
+  '@starbeam/debug',
+  '@starbeam/runtime',
+  '@starbeam/tags',
+  '@starbeam/verify',
+  ['@starbeam/resource', `0.0.1-unstable.${sha}`],
+  ['@starbeam/shared', `1.3.8-unstable.${sha}`],
+  ['@starbeam/tags', `0.0.1-unstable.${sha}`],
 ];
 
 for (let pkg of packages) {
-  map[pkg] = `https://esm.sh/*${pkg}@${version}`;
+  if (Array.isArray(pkg)) {
+    let [name, version] = pkg;
+    map[pkg] = `https://esm.sh/*${name}@${version}?raw`;
+
+    continue;
+  }
+
+  map[pkg] = `https://esm.sh/*${pkg}@${version}?raw`;
 }
 
 let mapContent = { imports: map };
