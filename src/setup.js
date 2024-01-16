@@ -11,7 +11,10 @@
 let sha = '9b5a07d';
 let version = `0.8.10-unstable.${sha}`; /* unstable / nightly */
 let map = {
+  // Dependencies required by starbeam, that we need to work
+  // to get rid of in production
   'inspect-utils': 'https://esm.sh/inspect-utils',
+  stacktracey: 'https://esm.sh/stacktracey',
 };
 
 let packages = [
@@ -20,7 +23,7 @@ let packages = [
   '@starbeam/reactive',
   '@starbeam/universal',
   // Dependencies that we want to make sure only get included once
-  // '@starbeam/core-utils',
+  '@starbeam/core-utils',
   '@starbeam/debug',
   '@starbeam/runtime',
   '@starbeam/tags',
@@ -34,7 +37,7 @@ for (let pkg of packages) {
   if (Array.isArray(pkg)) {
     let [name, version] = pkg;
 
-    map[pkg] = `https://esm.sh/*${name}@${version}?raw`;
+    map[name] = `https://esm.sh/*${name}@${version}?raw`;
 
     continue;
   }

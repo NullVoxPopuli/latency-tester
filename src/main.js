@@ -1,5 +1,5 @@
-// import { reactive } from "@starbeam/collections";
-import { reactive } from '@starbeam/js';
+import { reactive } from '@starbeam/collections';
+// import { reactive } from '@starbeam/js';
 import { Cell, DEBUG_RENDERER } from '@starbeam/universal';
 
 import { avg, find, slidingWindowAverageOf, timeout, timestampsToIntervals } from './utils.js';
