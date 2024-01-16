@@ -232,9 +232,10 @@ DEBUG_RENDERER.render({
   debug: ([ms, bpm]) => {
     let rounded = ms ? ms.toFixed(3) : 0;
     let beatDuration = MS_IN_M / bpm;
+    let mod = rounded ? (rounded % (MS_IN_M / bpm)).toFixed(3) : 'pending';
 
     elements.latencyDisplay.innerHTML = rounded || 'pending';
-    elements.modLatencyDisplay.innerHTML = rounded ? rounded % (MS_IN_M / bpm) : 'pending';
+    elements.modLatencyDisplay.innerHTML = mod;
   },
 });
 

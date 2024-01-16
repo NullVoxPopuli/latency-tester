@@ -1,148 +1,146 @@
-<!DOCTYPE html>
-<html lang='en'>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="Test the latency between a sound and when you hear it" />
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="description" content="Test the latency between a sound and when you hear it">
+    <title>Latency Tester</title>
+    <script src="./src/setup.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/2.0.0/modern-normalize.min.css"
+    />
 
-  <title>Latency Tester</title>
-  <script src="./src/setup.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/2.0.0/modern-normalize.min.css">
+    <style>
+      body {
+        padding: 1rem 2rem;
+      }
 
-  <style>
-    body {
-      padding: 1rem 2rem;
-    }
+      footer {
+        position: fixed;
+        bottom: 1rem;
+        background: white;
+      }
 
-    footer {
-      position: fixed;
-      bottom: 1rem;
-      background: white;
-    }
+      progress {
+        margin: 0 auto;
+      }
 
-    progress {
-      margin: 0 auto;
-    }
+      #interaction {
+        margin: 0 auto;
+        height: 200px;
+        width: 200px;
+        position: relative;
+      }
 
-    #interaction {
-      margin: 0 auto;
-      height: 200px;
-      width: 200px;
-      position: relative;
-    }
+      #tap-zone {
+        width: 200px;
+        height: 200px;
+      }
 
-    #tap-zone {
-      width: 200px;
-      height: 200px;
-    }
+      #data {
+        display: grid;
+        gap: 0.75rem;
+        grid-auto-flow: row;
+      }
 
-    #data {
-      display: grid;
-      gap: 0.75rem;
-      grid-auto-flow: row;
-    }
+      .info-with-details {
+        width: 300px;
+        max-width: 300px;
+        display: grid;
+        grid-auto-flow: row;
+        margin: 0 auto;
+      }
 
-    .info-with-details {
-      max-width: 300px;
-      display: grid;
-      grid-auto-flow: row;
-      margin: 0 auto;
-    }
+      .info-with-details details {
+        line-height: 1.2rem;
+        font-size: 0.8rem;
+      }
 
-    .info-with-details details {
-      line-height: 1.2rem;
-      font-size: 0.8rem;
-    }
+      label {
+        margin: 0 auto;
+        width: 100%;
+        max-width: 300px;
+        display: grid;
+        gap: 1rem;
+        grid-auto-flow: column;
+        line-height: 1.5rem;
+        justify-content: space-between;
+      }
 
-    label {
-      margin: 0 auto;
-      width: 100%;
-      max-width: 300px;
-      display: grid;
-      gap: 1rem;
-      grid-auto-flow: column;
-      line-height: 1.5rem;
-      justify-content: space-between;
-    }
+      input {
+        max-width: 80px;
+      }
 
-    input {
-      max-width: 80px;
-    }
+      #stop {
+        position: fixed;
+        padding: 0.75rem;
+        z-index: 1;
+        bottom: 2rem;
+        right: 2rem;
+      }
+    </style>
+  </head>
 
-    #stop {
-      position: fixed;
-      padding: 0.75rem;
-      z-index: 1;
-      bottom: 2rem;
-      right: 2rem;
-    }
-  </style>
-</head>
+  <body>
+    <h1>Latency Tester</h1>
+    <p>
+      Find out how many milliseconds of delay there is between the sound's play-start time, and when
+      you hear it.
 
-<body>
-  <h1>Latency Tester</h1>
-  <p>
-    Find out how many milliseconds of delay there is between the sound's play-start time, and when you hear it.
+      <br /><br />
 
-    <br><br>
+      <em>Instructions</em><br />
+      Tap the button on beat. The delay will be measured on a trailing average of the last 10 beats.
+      You'll have a countdown and timer until the starting beat.
+    </p>
 
-    <em>Instructions</em><br>
-    Tap the button on beat. The delay will be measured on a trailing average of the last 10 beats. You'll have a
-    countdown and timer until the starting beat.
-  </p>
-
-  <p id="data">
-    <label>
-      <span>Current BPM</span>
-      <input style='width: auto;' type='number' id='bpm' min="60">
-    </label>
-
-    <label>
-      <span>ms between beats</span>
-      <span id='beatDuration'>0</span>
-    </label>
-
-    <label>
-      <span>Current Latency (ms)</span>
-      <span id='latency'>0</span>
-    </label>
-
-    <span class="info-with-details">
+    <div id="data">
       <label>
-        <span>Modulo between beats (ms)</span>
-        <span id='modLatency'>0</span>
+        <span>Current BPM</span>
+        <input style="width: auto" type="number" id="bpm" min="60" />
       </label>
-      <details>
-        <summary>What's this?</summary>
-        If you happen to miss the first beat, this tries to calculate what your latency would be. The calculation is
-        [current latency] % [ms between beats].
 
-        It's possible for someone's hardware to have latency that extends beyond the duration of a whole beat, so it's
-        hard to know if a person just missed a beat, or if they really did click the moment they heard the first beat.
-      </details>
-    </span>
+      <label>
+        <span>ms between beats</span>
+        <span id="beatDuration">0</span>
+      </label>
 
-    <label>
-      <span>Detected BPM</span>
-      <span id='detectedBPM'></span>
-    </label>
-  </p>
+      <label>
+        <span>Current Latency (ms)</span>
+        <span id="latency">0</span>
+      </label>
 
-  <div id='interaction'>
-    <button id='tap-zone'>tap here to start</button>
-  </div>
-  <progress style="display: none;" id="progress" value="100" max="5000"></progress>
+      <span class="info-with-details">
+        <label>
+          <span>Modulo between beats (ms)</span>
+          <span id="modLatency">0</span>
+        </label>
+        <details>
+          <summary>What's this?</summary>
+          If you happen to miss the first beat, this tries to calculate what your latency would be.
+          The calculation is [current latency] % [ms between beats]. It's possible for someone's
+          hardware to have latency that extends beyond the duration of a whole beat, so it's hard to
+          know if a person just missed a beat, or if they really did click the moment they heard the
+          first beat.
+        </details>
+      </span>
 
-  <button style="display: none;" id="stop">stop</button>
+      <label>
+        <span>Detected BPM</span>
+        <span id="detectedBPM"></span>
+      </label>
+    </div>
 
-  <footer>
-    Contribute? <a href="https://github.com/NullVoxPopuli/latency-tester" target='_blank'
-      rel='noopener noreferrer'>https://github.com/NullVoxPopuli/latency-tester</a>
-  </footer>
+    <div id="interaction">
+      <button id="tap-zone">tap here to start</button>
+    </div>
+    <progress style="display: none" id="progress" value="100" max="5000"></progress>
 
-  <script type="module" src="./src/main.js"></script>
-</body>
+    <button style="display: none" id="stop">stop</button>
 
+    <script type="module" src="./src/main.js"></script>
+  </body>
 </html>
