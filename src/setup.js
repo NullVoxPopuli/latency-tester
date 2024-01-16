@@ -8,11 +8,11 @@
  *   make a UI toggle or something to change between simple and explicit techniques
  */
 // let version = '0.8.10-unstable.398c1bd'; /* unstable / nightly */
-let version = "latest";
+let version = 'latest';
 let map = {
-  "@starbeam/collections": "https://esm.run/@starbeam/collections@0.8.9",
-  "@starbeam/universal": "https://esm.run/@starbeam/universal@0.8.9",
-  "@starbeam/js": "https://esm.run/@starbeam/js@0.8.9",
+  '@starbeam/collections': 'https://esm.run/@starbeam/collections@0.8.9',
+  '@starbeam/universal': 'https://esm.run/@starbeam/universal@0.8.9',
+  '@starbeam/js': 'https://esm.run/@starbeam/js@0.8.9',
 };
 
 let packages = [
@@ -32,10 +32,10 @@ for (let pkg of packages) {
 
 let mapContent = { imports: map };
 
-let importMap = document.createElement("script");
+let importMap = document.createElement('script');
 
-importMap.setAttribute("type", "importmap");
-importMap.innerHTML = JSON.stringify(mapContent, null, "\t");
+importMap.setAttribute('type', 'importmap');
+importMap.innerHTML = JSON.stringify(mapContent, null, '\t');
 
 console.info(`importmap content:\n`, mapContent);
 

@@ -1,14 +1,8 @@
 // import { reactive } from "@starbeam/collections";
-import { reactive } from "@starbeam/js";
-import { Cell, DEBUG_RENDERER } from "@starbeam/universal";
+import { reactive } from '@starbeam/js';
+import { Cell, DEBUG_RENDERER } from '@starbeam/universal';
 
-import {
-  slidingWindowAverageOf,
-  avg,
-  timeout,
-  find,
-  timestampsToIntervals,
-} from "./utils.js";
+import { avg, find, slidingWindowAverageOf, timeout, timestampsToIntervals } from './utils.js';
 
 // NOTE:
 //  60,000 / BPM = [one beat in ms]
@@ -38,16 +32,16 @@ let userTimes = reactive.array();
 
 let elements = {
   // data
-  bpmInput: find("#bpm"),
-  latencyDisplay: find("#latency"),
-  modLatencyDisplay: find("#modLatency"),
-  detectedBpm: find("#detectedBPM"),
-  beatDuration: find("#beatDuration"),
+  bpmInput: find('#bpm'),
+  latencyDisplay: find('#latency'),
+  modLatencyDisplay: find('#modLatency'),
+  detectedBpm: find('#detectedBPM'),
+  beatDuration: find('#beatDuration'),
   // controls
-  stop: find("#stop"),
-  tapZone: find("#tap-zone"),
+  stop: find('#stop'),
+  tapZone: find('#tap-zone'),
   // info
-  progress: find("progress"),
+  progress: find('progress'),
 };
 
 // audio player
@@ -59,7 +53,7 @@ let audioBuffer = await loadSound();
 let player; // AudioBufferSourceNode
 
 async function loadSound() {
-  let response = await fetch("./kick.mp3", { mode: "no-cors" });
+  let response = await fetch('./kick.mp3', { mode: 'no-cors' });
   let arrayBuffer = await response.arrayBuffer();
   let audio = await audioContext.decodeAudioData(arrayBuffer);
 
@@ -76,6 +70,7 @@ function playSound(buffer, delay = 0) {
 
 async function start() {
   let currentBpmInMs = MS_IN_M / tempo.current;
+
   // Why do arrays not have a clear?
   beatTimes.splice(0, beatTimes.length);
   userTimes.splice(0, userTimes.length);
@@ -88,7 +83,7 @@ async function start() {
 }
 
 elements.bpmInput.value = tempo.current;
-elements.bpmInput.addEventListener("input", (e) => {
+elements.bpmInput.addEventListener('input', (e) => {
   let value = e.target.value;
   let num = parseInt(value, 10);
 
@@ -99,14 +94,14 @@ elements.bpmInput.addEventListener("input", (e) => {
 
 let countdown = Cell(3);
 
-elements.stop.addEventListener("click", () => {
+elements.stop.addEventListener('click', () => {
   stop();
   clearTimeout(gettingReadyTimeout);
   clearInterval(progressInterval);
 
   isRunning.current = false;
-  elements.progress.style.display = "none";
-  elements.tapZone.innerHTML = "tap here to start";
+  elements.progress.style.display = 'none';
+  elements.tapZone.innerHTML = 'tap here to start';
 });
 
 function countdownMessage(count) {
@@ -120,7 +115,8 @@ function countdownMessage(count) {
 
 let gettingReadyTimeout;
 let progressInterval;
-elements.tapZone.addEventListener("click", () => {
+
+elements.tapZone.addEventListener('click', () => {
   if (isRunning.current && countdown.current === 0) {
     userTimes.push(new Date());
 
@@ -134,12 +130,13 @@ elements.tapZone.addEventListener("click", () => {
       // from the beat time.
       beatTimes.shift();
     }
+
     return;
   }
 
   isRunning.current = true;
   elements.tapZone.innerHTML = `Get ready`;
-  elements.progress.style.display = "block";
+  elements.progress.style.display = 'block';
 
   let fiveS = 5_000;
   let increments = 1;
@@ -162,9 +159,9 @@ elements.tapZone.addEventListener("click", () => {
 
         gettingReadyTimeout = setTimeout(() => {
           countdown.current = 0;
-          elements.tapZone.innerHTML = "Tap";
+          elements.tapZone.innerHTML = 'Tap';
           clearInterval(progressInterval);
-          elements.progress.style.display = "none";
+          elements.progress.style.display = 'none';
 
           start();
         }, 1000);
@@ -176,7 +173,7 @@ elements.tapZone.addEventListener("click", () => {
 DEBUG_RENDERER.render({
   render: () => userTempo.current,
   debug: (tempo) => {
-    elements.detectedBpm.innerHTML = tempo ? tempo.toFixed(3) : "pending";
+    elements.detectedBpm.innerHTML = tempo ? tempo.toFixed(3) : 'pending';
   },
 });
 
@@ -205,16 +202,14 @@ DEBUG_RENDERER.render({
     let userLength = data.userTimes.length;
 
     if (userLength < 2) return;
+
     // Get the approprate length of system-beats.
     // It's possible there are more system beats,
     // because the user is delayed.
     //
     // Likewise, it's also possible someone is trying to break the tool
     // and give more beats faster than they're supposed to
-    let systemBeats = data.beatTimes.slice(
-      0,
-      Math.min(userLength, data.beatTimes.length),
-    );
+    let systemBeats = data.beatTimes.slice(0, Math.min(userLength, data.beatTimes.length));
 
     let intervals = [];
 
@@ -238,10 +233,8 @@ DEBUG_RENDERER.render({
     let rounded = ms ? ms.toFixed(3) : 0;
     let beatDuration = MS_IN_M / bpm;
 
-    elements.latencyDisplay.innerHTML = rounded || "pending";
-    elements.modLatencyDisplay.innerHTML = rounded
-      ? rounded % (MS_IN_M / bpm)
-      : "pending";
+    elements.latencyDisplay.innerHTML = rounded || 'pending';
+    elements.modLatencyDisplay.innerHTML = rounded ? rounded % (MS_IN_M / bpm) : 'pending';
   },
 });
 
@@ -255,10 +248,12 @@ DEBUG_RENDERER.render({
   debug: (isRunning) => {
     if (isRunning) {
       elements.bpmInput.disabled = true;
-      elements.stop.style.display = "block";
+      elements.stop.style.display = 'block';
+
       return;
     }
+
     elements.bpmInput.disabled = false;
-    elements.stop.style.display = "none";
+    elements.stop.style.display = 'none';
   },
 });

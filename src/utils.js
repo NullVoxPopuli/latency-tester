@@ -25,6 +25,7 @@ export function timestampsToIntervals(array) {
     let later = array[i + 1];
     let before = array[i];
     let interval = later - before;
+
     intervals.push(interval);
   }
 

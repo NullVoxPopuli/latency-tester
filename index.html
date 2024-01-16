@@ -2,16 +2,14 @@
 <html lang='en'>
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="description" content="Test the latency between a sound and when you hear it" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Test the latency between a sound and when you hear it">
 
   <title>Latency Tester</title>
-  <script type="text/javascript" src="./src/setup.js"></script>
-  <script defer type="module" src="./src/main.js"></script>
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/2.0.0/modern-normalize.min.css" />
+  <script src="./src/setup.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/2.0.0/modern-normalize.min.css">
 
   <style>
     body {
@@ -49,7 +47,7 @@
     .info-with-details {
       max-width: 300px;
       display: grid;
-      grid-autoflow: row;
+      grid-auto-flow: row;
       margin: 0 auto;
     }
 
@@ -88,9 +86,9 @@
   <p>
     Find out how many milliseconds of delay there is between the sound's play-start time, and when you hear it.
 
-    <br /><br />
+    <br><br>
 
-    <em>Instructions</em><br />
+    <em>Instructions</em><br>
     Tap the button on beat. The delay will be measured on a trailing average of the last 10 beats. You'll have a
     countdown and timer until the starting beat.
   </p>
@@ -111,25 +109,25 @@
       <span id='latency'>0</span>
     </label>
 
-  <div class="info-with-details">
+    <span class="info-with-details">
+      <label>
+        <span>Modulo between beats (ms)</span>
+        <span id='modLatency'>0</span>
+      </label>
+      <details>
+        <summary>What's this?</summary>
+        If you happen to miss the first beat, this tries to calculate what your latency would be. The calculation is
+        [current latency] % [ms between beats].
+
+        It's possible for someone's hardware to have latency that extends beyond the duration of a whole beat, so it's
+        hard to know if a person just missed a beat, or if they really did click the moment they heard the first beat.
+      </details>
+    </span>
+
     <label>
-      <span>Modulo between beats (ms)</span>
-      <span id='modLatency'>0</span>
+      <span>Detected BPM</span>
+      <span id='detectedBPM'></span>
     </label>
-    <details>
-      <summary>What's this?</summary>
-      If you happen to miss the first beat, this tries to calculate what your latency would be. The calculation is
-      {current latency} % {ms between beats}.
-
-      It's possible for someone's hardware to have latency that extends beyond the duration of a whole beat, so it's
-      hard to know if a person just missed a beat, or if they really did click the moment they heard the first beat.
-    </details>
-  </div>
-
-  <label>
-    <span>Detected BPM</span>
-    <span id='detectedBPM'></span>
-  </label>
   </p>
 
   <div id='interaction'>
@@ -140,10 +138,11 @@
   <button style="display: none;" id="stop">stop</button>
 
   <footer>
-    Contribute? <a href="https://github.com/NullVoxPopuli/latency-tester" target='_blank' ,
+    Contribute? <a href="https://github.com/NullVoxPopuli/latency-tester" target='_blank'
       rel='noopener noreferrer'>https://github.com/NullVoxPopuli/latency-tester</a>
   </footer>
 
+  <script type="module" src="./src/main.js"></script>
 </body>
 
 </html>
