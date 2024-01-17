@@ -32,9 +32,16 @@ for (let pkg of packages) {
 
 let mapContent = { imports: map };
 
-let importMap = document.createElement('script');
+function createImportMap() {
+  let importMap = document.createElement('script');
 
-importMap.setAttribute('type', 'importmap');
+  importMap.setAttribute('type', 'importmap');
+
+  return importMap();
+}
+
+let importMap = document.querySelector('script[type=importmap]') || createImportMap();
+
 importMap.innerHTML = JSON.stringify(mapContent, null, '\t');
 
 console.info(`importmap content:\n`, mapContent);
