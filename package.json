@@ -1,9 +1,9 @@
 {
   "scripts": {
-    "start": "pnpm http-server -c-1",
     "lint": "concurrently 'npm:lint:*:fix'",
     "lint:js:fix": "eslint . --fix",
-    "lint:prettier:fix": "prettier -w ."
+    "lint:prettier:fix": "prettier -w .",
+    "start": "pnpm http-server -c-1"
   },
   "files": [
     "src",
@@ -16,7 +16,7 @@
     "eslint": "^8.49.0",
     "eslint-plugin-ember": "^11.11.1",
     "eslint-plugin-qunit": "^8.0.0",
-    "http-server": "^14.1.1",
-    "prettier": "^3.2.2"
+    "prettier": "^3.2.2",
+    "http-server": "^14.1.1"
   }
 }
